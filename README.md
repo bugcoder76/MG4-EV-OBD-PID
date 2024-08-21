@@ -6,7 +6,7 @@ We try to put all the PIDs together in a single file for MG4
 ## How to use:
 These codes are primarily for use with Torque Pro which runs on Android phones and tablets.
 
-Download https://github.com/peternixon/MG4-EV-OBD-PID/archive/refs/heads/main.zip and extract the "extendedpids\MG ZS EV.csv" file into the ".torque\extendedpids\" directory on your phone then import it from the "Settings \ Manage extra PIDs/Sensors \ Add predefined set \ MG4 EV" Menu in the Torque Pro app.
+Download https://github.com/peternixon/MG4-EV-OBD-PID/archive/refs/heads/main.zip and extract the "extendedpids\MG4 EV.csv" file into the ".torque\extendedpids\" directory on your phone then import it from the "Settings \ Manage extra PIDs/Sensors \ Add predefined set \ MG4 EV" Menu in the Torque Pro app.
 
 The Torque wiki has more details at https://torquebhp.fandom.com/wiki/How_to_add_extended_PIDs
 
