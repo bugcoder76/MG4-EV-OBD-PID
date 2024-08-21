@@ -130,3 +130,133 @@
 "XX_BMS_SW_Ver_Raw","not for display","0x22f194","INT24(H:I:J)",0,1000000,"","781","","",1
 "MG BMS SW Version","BMS SW","","LOOKUP(VAL{XX_BMS_SW_Ver_Raw}:'???':4272176='A00':4272177='A01':5386551='R17':4543793='EU1':5387312='R40':5386808='R28':5387058='R32':5255225='P09')",0,1,"","","","",1
 "XX_BMS_Version_SoC _Factor","not for display","","LOOKUP(VAL{MG BMS SW Version}:-2:4272176=-3:5386551=-5:5387312=-5:5386808=-5:5387058=-3:5255225=-5)",-100,100,"","","","",1
+
+"Z_MG_SoC_RAW","SoC_R","22B046","((A*256)+B)*(sqrt(B)/sqrt(B))*0.1","0","100","%","","","1"
+"!MG_SoC","SoC","","val{!MG_SoC}+((val{Z_MG_SoC_RAW}-val{!MG_SoC})*INT((val{Z_MG_SoC_RAW}/(val{Z_MG_SoC_RAW}+0.01))+0.1))","0","100","%","","","1"
+"Z_MG_SoH_RAW","SoH_R","22B061","((A*256)+B)*0.01*(sqrt(B)/sqrt(B))","0","100","%","","","1"
+"!MG_SoH","SoH","","val{!MG_SoH}+((val{Z_MG_SoH_RAW}-val{!MG_SoH})*INT((val{Z_MG_SoH_RAW}/(val{Z_MG_SoH_RAW}+0.01))+0.1))","0","100","%","","","1"
+"Z_MG_BattAmp_RAW","BattA_R","22B043","((((A*256)+B)*0.025)-1000)*(sqrt(B)/sqrt(B))","-1000","638.4","A","","","1"
+"!MG_BattAmp","BattA","","val{!MG_BattAmp}+((val{Z_MG_BattAmp_RAW}-val{!MG_BattAmp})*INT((abs(val{Z_MG_BattAmp_RAW})/(abs(val{Z_MG_BattAmp_RAW})+0.01))+0.1))","-1000","638.4","A","","","1"
+"Z_MG_BattVolt_RAW","BattV_R","22B042","((A*256)+B)*0.25*(sqrt(B)/sqrt(B))","0","16384","V","","","1"
+"!MG_BattVolt","BattV","","val{!MG_BattVolt}+((val{Z_MG_BattVolt_RAW}-val{!MG_BattVolt})*INT((val{Z_MG_BattVolt_RAW}/(val{Z_MG_BattVolt_RAW}+0.01))+0.1))","0","16384","V","","","1"
+"Z_MG_MaxCharge_RAW","MaxCharge_R","22B712","((A*256)+B)*0.1*(sqrt(B)/sqrt(B))","0","200","kw","","","1"
+"!MG_MaxCharge","MaxCharge","","val{!MG_MaxCharge}+((val{Z_MG_MaxCharge_RAW}-val{!MG_MaxCharge})*INT((val{Z_MG_MaxCharge_RAW}/(val{Z_MG_MaxCharge_RAW}+0.01))+0.1))","0","200","kw","","","1"
+"!MG_BattTemp","BattT","22B05C","(A/2)-40","-40","88","C","","","1"
+"!MG_BattPower","BattP","","val{!MG_BattAmp}*val{!MG_BattVolt}/1000","-200","200","kw","","","1"
+"Z_MG_Charging_RAW","CHG_R","22B048","BIT(A:1)*BIT(A:2)","0","1","","","","1"
+"!MG_Charging","CHG","","VAL{Z_MG_Charging_RAW}+RDLY(2:[22B048])+RDLY(4:[22B048])+RDLY(8:[22B048])+RDLY(16:[22B048])+RDLY(32:[22B048])+RDLY(64:[22B048])+RDLY(128:[22B048])","0","1","","","","1"
+
+"MG4EV_Cons_60MPH","Cons 60","","3.8",0,10,"m/Kwh","","","",1
+"MG4EV_Range_60MPH","Range","","(42*VAL{MG4EV_Cons_60MPH})*(1-((25-VAL{XX_OAT_Factored})/100))*(VAL{MG Battery State of Charge}/100)*(VAL{MG Battery State of Health}/100)",0,200,"max 60mph","","","",1
+"MG4EV_Range_70MPH","Range","","(42*VAL{XX_Cons_70MPH})*(1-((25-VAL{XX_OAT_Factored})/100))*(VAL{MG Battery State of Charge}/100)*(VAL{MG Battery State of Health}/100)",0,200,"max 70mph","","","",1
+"MG4EV_Range_Charger_To_Charger","Charger","","((42*VAL{MG4EV_Cons_60MPH})*(1-((25-VAL{XX_OAT_Factored})/100)))*(85-15)/100",1,200,"Range","","","",1
+"MG4EV_Target_Cons_60MPH","Target m/kwh","","VAL{MG4EV_Range_60MPH}/(42*(VAL{MG Battery State of Charge}/100))",0,10,"max 60mph","","","",1
+"MG4EV_Target_Cons_70MPH","Target m/kwh","","VAL{MG4EV_Range_70MPH}/(42*(VAL{MG Battery State of Charge}/100))",0,10,"max 70mph","","","",1
+
+"XX_Cons_70MPH","not for display","","VAL{MG4EV_Cons_60MPH}/((70/60)*(70/60))",1,10,"m/Kwh","","","",1
+"XX_OAT_Factored","not for display","","LOOKUP(VAL{MG Outside Temp}::25~50=25)",-10,50,"C","","","",1
+
+"..eMG4 Air Comp","Air","0x22bb01","INT16(A:B)/100",0,7,"kW","7E3","","",1
+"..eMG4 Batt Coolant","Batt Coolant","0x22b05c","(A/2)-40",0,50,"c","781","","",1
+"..eMG4 Batt Temp","Batt Temp","0x22b056","(A/2)-40",0,50,"c","781","","",1
+"..eMG4 Battery","Battery","0x22b705","INT16(A:B)/10",350,460,"v","7E3","","",1
+"..eMG4 CellMaxVolt","CellMaxVolt","0x22b058","INT16(A:B)/1000",2.5,4.400000095367432,"V","781","","",1
+"..eMG4 CellMinVolt","CellMinVolt","0x22b059","INT16(A:B)/1000",2.5,4.400000095367432,"V","781","","",1
+"..eMG4 Consumption","Consumption","","10*TOT(1:VAL{SocDiff})",0,250,"%","","","",1
+"..eMG4 Coolant","Coolant","0x22b309","A-40",0,60,"c","7E3","","",1
+"..eMG4 Current","Current","0x22b043","(INT16(A:B)-40000)/40",-100,100,"A","781","","",1
+"..eMG4 DCDC In Amp","Current Input","0x22b581","(INT16(A:B) - 32767)/10",0,10,"A","7E3","","",1
+"..eMG4 DCDC In Volt","Volt Input","0x22b582","INT16(A:B)/10",0,460,"V","7E3","","",1
+"..eMG4 DCDC Mode","Mode","0x22b580","A",0,5,"","7E3","","",1
+"..eMG4 DCDC Out Amp","Current Output","0x22b583","INT16(A:B)/10",0,100,"A","7E3","","",1
+"..eMG4 DCDC Out Volt","Volt Output","0x22b584","INT16(A:B)/10",8,16,"V","7E3","","",1
+"..eMG4 DCDC Temp","Temp","0x22b587","A-40",25,60,"c","7E3","","",1
+"..eMG4 Distance","Distance","","TOT(3600:VAL{..eMG4 Speed})",0,337,"km","","","",1
+"..eMG4 Efficiency","Efficiency","","LOOKUP(VAL{..eMG4 Speed}:(VAL{..eMG4 Total Power}/LOOKUP(VAL{..eMG4 Speed}::0~1=1))*1000:0~1=0)",80,200,"Wh/km","","","",1
+"..eMG4 Efficiency3s","Efficiency 3s","","TAVG(3:VAL{..eMG4 Efficiency})",80,200,"Wh/km","","","",1
+"..eMG4 Est Distance","Est Distance","","(445*VAL{..eMG4 SoC})/LOOKUP(VAL{..eMG4 Total Eff}::0=0.1)",0,400,"Km","","","",1
+"..eMG4 Fan","Fan","0x22bb91","A",0,1,"","7E3","","",1
+"..eMG4 Motor Power","Motor Power","","(VAL{..eMG4 Motor Speed} * VAL{..eMG4 Motor Torque})/10000",-50,100,"kW","","","",1
+"..eMG4 Motor Speed","Motor Speed","0x22b402","INT16(A:B)-32767",-1000,10000,"rpm","7E3","","",1
+"..eMG4 Motor Temp","Motor","0x22b405","A-40",0,60,"c","7E3","","",1
+"..eMG4 Motor Torque","Motor Torque","0x22b401","(INT16(A:B)-32767)/10",-100,360,"Nm","7E3","","",1
+"..eMG4 Outside Temp","Outside","0x22bb05","A-40",0,50,"c","7E3","","",1
+"..eMG4 SoC","SoC","0x22b701","INT16(A:B)/10",0,100,"%","7E3","","",1
+"..eMG4 SoH","SoH","0x22b061","(a*256+b)/100",0,100,"%","781","","",1
+"..eMG4 Speed","Speed","0x22ba00","ABS((INT16(A:B)-20000)/100)",0,155,"km/h","7E3","","",1
+"..eMG4 Total Eff","Total Efficiency","","(445*VAL{..eMG4 Consumption})/LOOKUP(VAL{..eMG4 Distance}::0=0.1)",0,250,"Wh/km","","","",1
+"..eMG4 Total Power","Total Power","","VAL{..eMG4 Battery}*VAL{..eMG4 Current}/1000",-50,100,"kW","","","",1
+"..eMG4 Trip Cost","Cost","","4.2*0.445*VAL{eZS Consumption}",0,400,"Baht","","","",1
+"..eMG4 Trip Range","Trip Range","","43100/LOOKUP(VAL{..eMG4 Total Eff}::0=0.1)",0,400,"Km","","","",1
+".00_BMS Coolant","Coolant","0x22b05c","(a/2)-40",0,60,"C","781","","",1
+".00_BMS Current","Current","0x22b043","(INT16(A:B)-40000)/40",-100,100,"A","781","","",1
+".00_BMS Day","Day","0x22b06d","C",1,31,"","781","","",1
+".00_BMS DC Bus Volt","DC Bus","0x22b041","(a*256+b)/4",350,480,"V","781","","",1
+".00_BMS Error","BMS Error","0x22b047","a",0,255,"","781","","",1
+".00_BMS Hour","Hour","0x22b06d","D",0,23,"","781","","",1
+".00_BMS MaxTemp","MaxTemp","0x22b056","(a/2)-40",0,60,"C","781","","",1
+".00_BMS MaxTempCell","MaxTempCell","0x22b056","b",0,255,"","781","","",1
+".00_BMS MaxVolt","MaxVolt","0x22b058","INT16(A:B)/1000",2.5,4.400000095367432,"V","781","","",1
+".00_BMS MaxVoltCell","MaxVoltCell","0x22b058","C",0,255,"","781","","",1
+".00_BMS MinTemp","MinTemp","0x22b057","(a/2)-40",0,60,"C","781","","",1
+".00_BMS MinTempCell","MinTempCell","0x22b057","b",0,255,"","781","","",1
+".00_BMS Minute","Minute","0x22b06d","E",0,59,"","781","","",1
+".00_BMS MinVolt","MinVolt","0x22b059","INT16(A:B)/1000",2.5,4.400000095367432,"V","781","","",1
+".00_BMS MinVoltCell","MinVoltCell","0x22b059","C",0,255,"","781","","",1
+".00_BMS Month","Month","0x22b06d","B",1,12,"","781","","",1
+".00_BMS Resistance","Resistance","0x22b045","(a*256+b)/2",0,8190.5,"Ohm","781","","",1
+".00_BMS Sec","Sec","0x22b06d","F",0,59,"","781","","",1
+".00_BMS SoC","SoC","0x22b046","(a*256+b)/10",0,100,"%","781","","",1
+".00_BMS SoH","SoH","0x22b061","(a*256+b)/100",0,100,"%","781","","",1
+".00_BMS Status","BMS Status","0x22b048","a",0,255,"","781","","",1
+".00_BMS SystemMainRelayB","SMRB","0x22b049","a",0,1,"","781","","",1
+".00_BMS SystemMainRelayG","SMRG","0x22b04a","a",0,1,"","781","","",1
+".00_BMS SystemMainRelayP","SMRP","0x22b052","a",0,1,"","781","","",1
+".00_BMS Unit01 Circuit Temp","CMU01 Circuit","0x22b001","(g/2)-40",0,60,"C","781","","",1
+".00_BMS Unit01 MaxVolt","CMU01 Max","0x22b001","((c*256+d)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit01 MinVolt","CMU01 Min","0x22b001","((a*256+b)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit01 Temp1","CMU01 Temp1","0x22b001","(f/2)-40",0,60,"C","781","","",1
+".00_BMS Unit01 Temp2","CMU01 Temp2","0x22b001","(e/2)-40",0,60,"C","781","","",1
+".00_BMS Unit02 Circuit Temp","CMU02 Circuit","0x22b009","(g/2)-40",0,60,"C","781","","",1
+".00_BMS Unit02 MaxVolt","CMU02 Max","0x22b009","((c*256+d)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit02 MinVolt","CMU02 Min","0x22b009","((a*256+b)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit02 Temp1","CMU02 Temp1","0x22b009","(f/2)-40",0,60,"C","781","","",1
+".00_BMS Unit02 Temp2","CMU02 Temp2","0x22b009","(e/2)-40",0,60,"C","781","","",1
+".00_BMS Unit03 Circuit Temp","CMU03 Circuit","0x22b011","(g/2)-40",0,60,"C","781","","",1
+".00_BMS Unit03 MaxVolt","CMU03 Max","0x22b011","((c*256+d)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit03 MinVolt","CMU03 Min","0x22b011","((a*256+b)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit03 Temp1","CMU03 Temp1","0x22b011","(f/2)-40",0,60,"C","781","","",1
+".00_BMS Unit03 Temp2","CMU03 Temp2","0x22b011","(e/2)-40",0,60,"C","781","","",1
+".00_BMS Unit04 Circuit Temp","CMU04 Circuit","0x22b019","(g/2)-40",0,60,"C","781","","",1
+".00_BMS Unit04 MaxVolt","CMU04 Max","0x22b019","((c*256+d)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit04 MinVolt","CMU04 Min","0x22b019","((a*256+b)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit04 Temp1","CMU04 Temp1","0x22b019","(f/2)-40",0,60,"C","781","","",1
+".00_BMS Unit04 Temp2","CMU04 Temp2","0x22b019","(e/2)-40",0,60,"C","781","","",1
+".00_BMS Unit05 Circuit Temp","CMU05 Circuit","0x22b021","(g/2)-40",0,60,"C","781","","",1
+".00_BMS Unit05 MaxVolt","CMU05 Max","0x22b021","((c*256+d)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit05 MinVolt","CMU05 Min","0x22b021","((a*256+b)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit05 Temp1","CMU05 Temp1","0x22b021","(f/2)-40",0,60,"C","781","","",1
+".00_BMS Unit05 Temp2","CMU05 Temp2","0x22b021","(e/2)-40",0,60,"C","781","","",1
+".00_BMS Unit06 Circuit Temp","CMU06 Circuit","0x22b029","(g/2)-40",0,60,"C","781","","",1
+".00_BMS Unit06 MaxVolt","CMU06 Max","0x22b029","((c*256+d)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit06 MinVolt","CMU06 Min","0x22b029","((a*256+b)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit06 Temp1","CMU06 Temp1","0x22b029","(f/2)-40",0,60,"C","781","","",1
+".00_BMS Unit06 Temp2","CMU06 Temp2","0x22b029","(e/2)-40",0,60,"C","781","","",1
+".00_BMS Unit07 Circuit Temp","CMU07 Circuit","0x22b0a3","(g/2)-40",0,60,"C","781","","",1
+".00_BMS Unit07 MaxVolt","CMU07 Max","0x22b0a3","((c*256+d)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit07 MinVolt","CMU07 Min","0x22b0a3","((a*256+b)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit07 Temp1","CMU07 Temp1","0x22b0a3","(f/2)-40",0,60,"C","781","","",1
+".00_BMS Unit07 Temp2","CMU07 Temp2","0x22b0a3","(e/2)-40",0,60,"C","781","","",1
+".00_BMS Unit08 Circuit Temp","CMU08 Circuit","0x22b0ab","(g/2)-40",0,60,"C","781","","",1
+".00_BMS Unit08 MaxVolt","CMU08 Max","0x22b0ab","((c*256+d)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit08 MinVolt","CMU08 Min","0x22b0ab","((a*256+b)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit08 Temp1","CMU08 Temp1","0x22b0ab","(f/2)-40",0,60,"C","781","","",1
+".00_BMS Unit08 Temp2","CMU08 Temp2","0x22b0ab","(e/2)-40",0,60,"C","781","","",1
+".00_BMS Unit09 Circuit Temp","CMU09 Circuit","0x22b0b3","(g/2)-40",0,60,"C","781","","",1
+".00_BMS Unit09 MaxVolt","CMU09 Max","0x22b0b3","((c*256+d)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit09 MinVolt","CMU09 Min","0x22b0b3","((a*256+b)/2000)+1",2.5,4.400000095367432,"V","781","","",1
+".00_BMS Unit09 Temp1","CMU09 Temp1","0x22b0b3","(f/2)-40",0,60,"C","781","","",1
+".00_BMS Unit09 Temp2","CMU09 Temp2","0x22b0b3","(e/2)-40",0,60,"C","781","","",1
+".00_BMS Volt","Battery","0x22b042","(a*256+b)/4",350,480,"V","781","","",1
+".00_BMS Year","Year","0x22b06d","A",0,60,"","781","","",1
+"SocDiff","SocDiff","","LOOKUP(RDLY(1:VAL{..eMG4 Soc})-VAL{..eMG4 SoC}:0:0.01~0.2=0.1:-0.2~-0.01=-0.1)",0,100,"%","","","",1
