@@ -1,11 +1,11 @@
-# MG-EV-OBD-PID
+# MG4-EV-OBD-PID
 PID file for MG EV suitable for use with Torque Pro
 These are being tested with an Australian 2021 model MG ZS EV.
 
 ## How to use:
 These codes are primarily for use with Torque Pro which runs on Android phones and tablets.
 
-Download https://github.com/peternixon/MG-EV-OBD-PID/archive/refs/heads/main.zip and extract the "extendedpids\MG ZS EV.csv" file into the ".torque\extendedpids\" directory on your phone then import it from the "Settings \ Manage extra PIDs/Sensors \ Add predefined set \ MG ZS EV" Menu in the Torque Pro app.
+Download https://github.com/peternixon/MG4-EV-OBD-PID/archive/refs/heads/main.zip and extract the "extendedpids\MG ZS EV.csv" file into the ".torque\extendedpids\" directory on your phone then import it from the "Settings \ Manage extra PIDs/Sensors \ Add predefined set \ MG ZS EV" Menu in the Torque Pro app.
 
 The Torque wiki has more details at https://torquebhp.fandom.com/wiki/How_to_add_extended_PIDs
 
